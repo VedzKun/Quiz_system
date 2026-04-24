@@ -12,30 +12,6 @@ const PORT = 4000;
 app.use(cors());
 app.use(express.json());
 
-// A pre-defined set of mock data introducing duplicates across different polls
-const mockData = [
-  // Poll 0
-  [{ roundId: 1, participant: 'Alice', score: 10 }, { roundId: 1, participant: 'Bob', score: 8 }],
-  // Poll 1 (Alice duplicate from round 1, plus new Charlie)
-  [{ roundId: 1, participant: 'Alice', score: 10 }, { roundId: 1, participant: 'Charlie', score: 5 }],
-  // Poll 2
-  [{ roundId: 2, participant: 'Bob', score: 15 }, { roundId: 2, participant: 'Diana', score: 12 }],
-  // Poll 3 (Bob duplicate from round 2)
-  [{ roundId: 2, participant: 'Bob', score: 15 }],
-  // Poll 4
-  [{ roundId: 3, participant: 'Alice', score: 20 }, { roundId: 3, participant: 'Eve', score: 25 }],
-  // Poll 5
-  [{ roundId: 3, participant: 'Charlie', score: 10 }],
-  // Poll 6
-  [{ roundId: 4, participant: 'Diana', score: 18 }],
-  // Poll 7 (Diana duplicate from round 4)
-  [{ roundId: 4, participant: 'Diana', score: 18 }, { roundId: 4, participant: 'Alice', score: 5 }],
-  // Poll 8
-  [{ roundId: 5, participant: 'Bob', score: 10 }, { roundId: 5, participant: 'Eve', score: 15 }],
-  // Poll 9
-  [{ roundId: 5, participant: 'Charlie', score: 8 }]
-];
-
 app.get('/quiz/messages', (req, res) => {
   const pollIndex = parseInt(req.query.poll, 10);
   
@@ -43,8 +19,30 @@ app.get('/quiz/messages', (req, res) => {
     return res.status(400).json({ error: 'Invalid poll index. Must be 0-9.' });
   }
 
-  const messages = mockData[pollIndex] || [];
-  res.json({ events: messages });
+  // Dynamically generate 5 participants per poll so "Test Mode" has 5 users
+  const participants = ["Alice", "Bob", "Charlie", "Diana", "Eve"];
+  const events = participants.map(p => ({
+    roundId: "R" + (pollIndex % 3),
+    participant: p,
+    score: Math.floor(Math.random() * 20) + 5
+  }));
+
+  // Duplicate Injection (30% chance)
+  if (Math.random() < 0.3) {
+    events.push({ ...events[0] }); // Inject duplicate
+  }
+
+  // Hardcode edge cases to test deduplication
+  if (pollIndex === 2) {
+    events.push({ roundId: "R1", participant: "Alice", score: 10 });
+    events.push({ roundId: "R1", participant: "Alice", score: 10 });
+  }
+  if (pollIndex === 4) {
+    events.push({ roundId: "R1", participant: "Diana", score: 12 });
+    events.push({ roundId: "R2", participant: "Diana", score: 18 });
+  }
+
+  res.json({ events });
 });
 
 app.post('/quiz/submit', (req, res) => {
