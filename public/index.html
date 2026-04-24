@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Leaderboard System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Quiz Leaderboard</h1>
+      <p>A backend-heavy architecture demo</p>
+    </header>
+
+    <div class="info-box">
+      <strong>Simulation Mode:</strong> Fast 500ms polling with artificially injected duplicate data to demonstrate the system's fault tolerance and deduplication logic.
+      <br><br>
+      <strong>Real API:</strong> Hits the live <code>devapigw.vidalhealthtpa.com</code> endpoint with the strict 5-second polling delay as required by the assignment constraints.
+    </div>
+
+    <div class="controls">
+      <button id="start-btn" class="btn primary">Start Processing</button>
+      <button id="reset-btn" class="btn secondary">Reset</button>
+      
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input type="checkbox" id="mock-toggle" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label" id="mode-label">Mode: SIMULATION</span>
+      </div>
+
+      <span id="status-badge" class="badge idle">Status: IDLE</span>
+    </div>
+
+    <div class="main-content">
+      <div class="panel" id="leaderboard-panel">
+        <h2>Live Leaderboard</h2>
+        <div id="leaderboard-container">
+          <p class="placeholder-text">Waiting for data...</p>
+        </div>
+      </div>
+
+      <div class="panel" id="polling-panel">
+        <h2>Polling Progress</h2>
+        <div id="polling-container">
+          <p class="placeholder-text">Click "Start Processing" to begin fetching data.</p>
+        </div>
+      </div>
+
+      <div class="panel" id="logs-panel">
+        <h2>System Logs</h2>
+        <div id="logs-container" class="logs-window">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
