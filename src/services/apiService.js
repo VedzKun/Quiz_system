@@ -11,7 +11,7 @@ const TOTAL_POLLS = 10; // poll values 0 through 9
 
 // Generates fake poll responses, injecting duplicates and edge cases.
 function mockApi(pollIndex) {
-  const participants = ["Alice", "Bob", "Charlie"];
+  const participants = ["Alice", "Bob", "Charlie", "Diana", "Eve"];
   const events = participants.map(p => ({
     roundId: "R" + (pollIndex % 3),
     participant: p,
@@ -32,10 +32,10 @@ function mockApi(pollIndex) {
     console.log(`[Mock API] Injected hardcoded duplicate edge case (Alice R1) into poll 2`);
   }
   if (pollIndex === 4) {
-    // Tricky Case 2: Same participant, different round (Valid)
-    events.push({ roundId: "R1", participant: "Alice", score: 10 });
-    events.push({ roundId: "R2", participant: "Alice", score: 15 });
-    console.log(`[Mock API] Injected hardcoded multi-round edge case (Alice R1 & R2) into poll 4`);
+    // Tricky Case 2: Same participant, different round (Valid — should NOT be deduped)
+    events.push({ roundId: "R1", participant: "Diana", score: 12 });
+    events.push({ roundId: "R2", participant: "Diana", score: 18 });
+    console.log(`[Mock API] Injected hardcoded multi-round edge case (Diana R1 & R2) into poll 4`);
   }
 
   return { events };
